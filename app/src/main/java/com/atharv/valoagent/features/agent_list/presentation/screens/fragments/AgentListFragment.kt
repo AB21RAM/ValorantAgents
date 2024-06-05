@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
+import com.atharv.valoagent.R
 import com.atharv.valoagent.databinding.FragmentAgentListBinding
 import com.atharv.valoagent.features.agent_list.domain.model.AgentData
 import com.atharv.valoagent.features.agent_list.presentation.adapter.AgentAdapter
@@ -15,8 +17,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AgentListFragment : Fragment() {
     private lateinit var binding: FragmentAgentListBinding
-    private lateinit var agentAdapter: AgentAdapter
     private val agentListViewModel: AgentListViewModel by activityViewModels()
+    private lateinit var agentAdapter: AgentAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -25,7 +28,7 @@ class AgentListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding =  FragmentAgentListBinding.inflate(inflater, container, false)
 
@@ -33,6 +36,7 @@ class AgentListFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupUI()
         setupObservers()
     }
     private fun setupObservers() {
@@ -84,5 +88,17 @@ class AgentListFragment : Fragment() {
         binding.errorTextView.visibility = View.VISIBLE
         binding.agentRv.visibility = View.GONE
         binding.errorTextView.text = errorMsg
+    }
+    private fun setupUI() {
+        requireActivity().window.statusBarColor = requireActivity().resources.getColor(com.google.android.material.R.color.m3_ref_palette_dynamic_neutral0)
+        handleOnBackPress()
+    }
+    private fun handleOnBackPress() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    requireActivity().finish()
+                }
+            })
     }
 }

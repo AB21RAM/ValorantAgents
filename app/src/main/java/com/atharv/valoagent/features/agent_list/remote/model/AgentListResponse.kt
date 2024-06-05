@@ -1,4 +1,4 @@
-package com.atharv.valoagent.features.agent_list.data.remote.model
+package com.atharv.valoagent.features.agent_list.remote.model
 
 
 import com.google.gson.annotations.SerializedName

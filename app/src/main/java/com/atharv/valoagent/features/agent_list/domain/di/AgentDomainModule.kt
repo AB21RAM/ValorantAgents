@@ -11,8 +11,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AgentDomainModule {
-    @Singleton
-    @Provides
     fun provideAgentRemoteUseCase(agentRemoteRepository: AgentRemoteRepository) : GetAgentListRemotelyUseCase{
         return GetAgentListRemotelyUseCase(agentRemoteRepository)
     }
