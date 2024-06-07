@@ -1,6 +1,8 @@
 package com.atharv.valoagent.features.agent_list.presentation.screens.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -61,12 +63,14 @@ class AgentListFragment : Fragment() {
                 }
                 else -> {
                     // Show data
+                    Log.d("Data" , uiState.data.toString())
                     setupRecyclerView(uiState.data)
                 }
             }
         }
     }
-    private fun setupRecyclerView(notes: List<AgentData>) {
+    @SuppressLint("NotifyDataSetChanged")
+    private fun setupRecyclerView(data: List<AgentData>) {
         binding.progressBar.visibility = View.GONE
         binding.errorTextView.visibility = View.GONE
         binding.agentRv.visibility = View.VISIBLE
@@ -74,7 +78,8 @@ class AgentListFragment : Fragment() {
         agentAdapter = AgentAdapter(requireContext())
         binding.agentRv.setHasFixedSize(true)
         binding.agentRv.adapter = agentAdapter
-        agentAdapter.updateList(notes)
+//        agentAdapter.notifyDataSetChanged()
+        agentAdapter.updateList(data)
     }
 
     private fun showLoading(isLoading: Boolean) {
