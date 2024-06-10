@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.atharv.valoagent.R
 import com.atharv.valoagent.databinding.FragmentAgentListBinding
 import com.atharv.valoagent.features.agent_list.domain.model.AgentData
@@ -18,6 +19,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AgentListFragment : Fragment() {
+    companion object{
+        const val AGENT_DATA = "agent_data"
+    }
     private lateinit var binding: FragmentAgentListBinding
     private val agentListViewModel: AgentListViewModel by activityViewModels()
     private lateinit var agentAdapter: AgentAdapter
@@ -33,7 +37,6 @@ class AgentListFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding =  FragmentAgentListBinding.inflate(inflater, container, false)
-
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -75,12 +78,20 @@ class AgentListFragment : Fragment() {
         binding.errorTextView.visibility = View.GONE
         binding.agentRv.visibility = View.VISIBLE
 
-        agentAdapter = AgentAdapter(requireContext())
+        agentAdapter = AgentAdapter(requireContext(), onClick = this::onClick)
         binding.agentRv.setHasFixedSize(true)
         binding.agentRv.adapter = agentAdapter
 //        agentAdapter.notifyDataSetChanged()
         agentAdapter.updateList(data)
     }
+    private fun onClick(data: AgentData?) {
+        val agentDataBundle: Bundle = Bundle().apply {
+            putParcelable(AGENT_DATA, data)
+        }
+
+        findNavController().navigate(R.id.agentDetailsFragment, agentDataBundle)
+    }
+
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
