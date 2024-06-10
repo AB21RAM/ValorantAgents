@@ -1,12 +1,15 @@
 package com.atharv.valoagent.features.agent_list.presentation.screens.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.atharv.valoagent.R
 import com.atharv.valoagent.databinding.FragmentAgentListBinding
 import com.atharv.valoagent.features.agent_list.domain.model.AgentData
@@ -16,6 +19,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AgentListFragment : Fragment() {
+    companion object{
+        const val AGENT_DATA = "agent_data"
+    }
     private lateinit var binding: FragmentAgentListBinding
     private val agentListViewModel: AgentListViewModel by activityViewModels()
     private lateinit var agentAdapter: AgentAdapter
@@ -31,7 +37,6 @@ class AgentListFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding =  FragmentAgentListBinding.inflate(inflater, container, false)
-
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,21 +66,32 @@ class AgentListFragment : Fragment() {
                 }
                 else -> {
                     // Show data
+                    Log.d("Data" , uiState.data.toString())
                     setupRecyclerView(uiState.data)
                 }
             }
         }
     }
-    private fun setupRecyclerView(notes: List<AgentData>) {
+    @SuppressLint("NotifyDataSetChanged")
+    private fun setupRecyclerView(data: List<AgentData>) {
         binding.progressBar.visibility = View.GONE
         binding.errorTextView.visibility = View.GONE
         binding.agentRv.visibility = View.VISIBLE
 
-        agentAdapter = AgentAdapter(requireContext())
+        agentAdapter = AgentAdapter(requireContext(), onClick = this::onClick)
         binding.agentRv.setHasFixedSize(true)
         binding.agentRv.adapter = agentAdapter
-        agentAdapter.updateList(notes)
+//        agentAdapter.notifyDataSetChanged()
+        agentAdapter.updateList(data)
     }
+    private fun onClick(data: AgentData?) {
+        val agentDataBundle: Bundle = Bundle().apply {
+            putParcelable(AGENT_DATA, data)
+        }
+
+        findNavController().navigate(R.id.agentDetailsFragment, agentDataBundle)
+    }
+
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE

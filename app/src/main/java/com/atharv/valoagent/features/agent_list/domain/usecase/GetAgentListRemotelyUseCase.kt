@@ -19,7 +19,13 @@ class GetAgentListRemotelyUseCase @Inject constructor(
             emit(NetworkResult.Loading())
             if(agentRemoteRepository.getAgentList().isSuccessful){
                 val data = agentRemoteRepository.getAgentList().body()?.data?.map { data->
-                    AgentData(agentImageStr = data?.displayIcon, agentName = data?.displayName)
+                    AgentData(
+                        agentImageStr = data?.displayIcon,
+                        agentName = data?.displayName,
+                       description =  data?.description,
+                        fullPortraitV2 = data?.fullPortraitV2,
+                        fullPortrait = data?.fullPortrait
+                    )
                 }
                 emit(NetworkResult.Success(data = AgentList(data)))
             }
